@@ -1,0 +1,10 @@
+{
+  "name": "Sibyl",
+  "description": "",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "pegjs": "0.7.0",
+    "chai": "1.7.2"
+  }
+}
