@@ -28,25 +28,26 @@ pushhistogram = (histogram, value, count) ->
         histogram[bin] += count
         histogram
 
-module.exports = (lines) ->
-    total = 0
-    count = 0
-    min = Math.min()
-    max = Math.max()
-    histogram = makehistogram()
-    for line in lines
-        total += line.value * line.count
-        count += line.count
-        min = Math.min line.value, min
-        max = Math.max line.value, max
-        histogram = pushhistogram histogram, line.value, line.count
+module.exports =
+    aggregate: (lines) ->
+        total = 0
+        count = 0
+        min = Math.min()
+        max = Math.max()
+        histogram = makehistogram()
+        for line in lines
+            total += line.value * line.count
+            count += line.count
+            min = Math.min line.value, min
+            max = Math.max line.value, max
+            histogram = pushhistogram histogram, line.value, line.count
 
-    delete histogram.length
+        delete histogram.length
 
-    starttime: lines.starttime
-    endtime: lines.endtime
-    count: count
-    mean: total / count
-    min: min
-    max: max
-    histogram: histogram
+        starttime: lines.starttime
+        endtime: lines.endtime
+        count: count
+        mean: total / count
+        min: min
+        max: max
+        histogram: histogram

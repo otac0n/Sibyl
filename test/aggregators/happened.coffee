@@ -7,21 +7,21 @@ describe 'happened', ->
             lines = [{name: 'OK', type: 'happened', time: 15000}]
             lines.starttime = 10000
             lines.endtime = 20000
-            result = happened lines
+            result = happened.aggregate lines
             result.starttime.should.equal 10000
 
         it 'should give the correct end time for the lines', ->
             lines = [{name: 'OK', type: 'happened', time: 15000}]
             lines.starttime = 10000
             lines.endtime = 20000
-            result = happened lines
+            result = happened.aggregate lines
             result.endtime.should.equal 20000
 
         it 'should give the correct time for a single line', ->
             lines = [{name: 'OK', type: 'happened', time: 15000}]
             lines.starttime = 10000
             lines.endtime = 20000
-            result = happened lines
+            result = happened.aggregate lines
             result.times[0].should.equal 15000
 
         it 'should give the correct time for multiple lines', ->
@@ -32,12 +32,12 @@ describe 'happened', ->
                      {name: 'OK', type: 'happened', time: 19000}]
             lines.starttime = 10000
             lines.endtime = 20000
-            result = happened lines
+            result = happened.aggregate lines
             result.times.should.deep.equal [11000, 13000, 15000, 17000, 19000]
 
         it 'should return no times', ->
             lines = []
             lines.starttime = 10000
             lines.endtime = 20000
-            result = happened lines
+            result = happened.aggregate lines
             result.times.should.deep.equal []

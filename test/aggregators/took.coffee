@@ -7,14 +7,14 @@ describe 'took', ->
             lines = [{name: 'OK', type: 'took', value: 50, time: 15000, count: 1}]
             lines.starttime = 10000
             lines.endtime = 20000
-            result = took lines
+            result = took.aggregate lines
             result.starttime.should.equal 10000
 
         it 'should give the correct end time for the lines', ->
             lines = [{name: 'OK', type: 'took', value: 50, time: 15000, count: 1}]
             lines.starttime = 10000
             lines.endtime = 20000
-            result = took lines
+            result = took.aggregate lines
             result.endtime.should.equal 20000
 
         it 'should give the correct count', ->
@@ -25,7 +25,7 @@ describe 'took', ->
                      {name: 'OK', type: 'took', value: 90, time: 19000, count: 1}]
             lines.starttime = 10000
             lines.endtime = 20000
-            result = took lines
+            result = took.aggregate lines
             result.count.should.equal 5
 
         it 'should give the correct count when there are duplicate values', ->
@@ -36,7 +36,7 @@ describe 'took', ->
                      {name: 'OK', type: 'took', value: 70, time: 19000, count: 1}]
             lines.starttime = 10000
             lines.endtime = 20000
-            result = took lines
+            result = took.aggregate lines
             result.count.should.equal 5
 
         it 'should give the correct minimum value', ->
@@ -47,7 +47,7 @@ describe 'took', ->
                      {name: 'OK', type: 'took', value: 90, time: 19000, count: 1}]
             lines.starttime = 10000
             lines.endtime = 20000
-            result = took lines
+            result = took.aggregate lines
             result.min.should.equal 10
 
         it 'should give the correct maximum value', ->
@@ -58,7 +58,7 @@ describe 'took', ->
                      {name: 'OK', type: 'took', value: 90, time: 19000, count: 1}]
             lines.starttime = 10000
             lines.endtime = 20000
-            result = took lines
+            result = took.aggregate lines
             result.max.should.equal 90
 
         it 'should give the correct mean', ->
@@ -69,14 +69,14 @@ describe 'took', ->
                      {name: 'OK', type: 'took', value: 100, time: 19000, count: 1}]
             lines.starttime = 10000
             lines.endtime = 20000
-            result = took lines
+            result = took.aggregate lines
             result.mean.should.equal 54
 
         it 'should give the correct result with 1 item', ->
             lines = [{name: 'OK', type: 'took', value: 50, time: 15000, count: 1}]
             lines.starttime = 10000
             lines.endtime = 20000
-            result = took lines
+            result = took.aggregate lines
             result.should.deep.equal
                 starttime: 10000
                 endtime: 20000
@@ -100,7 +100,7 @@ describe 'took', ->
                      {name: 'OK', type: 'took', value: 90, time: 19000, count: 1/0.9}]
             lines.starttime = 10000
             lines.endtime = 20000
-            result = took lines
+            result = took.aggregate lines
             result.should.deep.equal
                 starttime: 10000
                 endtime: 20000
@@ -124,7 +124,7 @@ describe 'took', ->
             lines = ({name: 'OK', type: 'took', value: Math.floor(i / 2), time: 15000, count: 1} for i in [0..63])
             lines.starttime = 10000
             lines.endtime = 20000
-            result = took lines
+            result = took.aggregate lines
             result.should.deep.equal
                 starttime: 10000
                 endtime: 20000
@@ -172,7 +172,7 @@ describe 'took', ->
             lines.push {name: 'OK', type: 'took', value: 1.5, time: 15000, count: 1}
             lines.starttime = 10000
             lines.endtime = 20000
-            result = took lines
+            result = took.aggregate lines
             result.should.deep.equal
                 starttime: 10000
                 endtime: 20000
@@ -220,7 +220,7 @@ describe 'took', ->
             lines.push {name: 'OK', type: 'took', value: 1000000, time: 15000, count: 1}
             lines.starttime = 10000
             lines.endtime = 20000
-            result = took lines
+            result = took.aggregate lines
             result.should.deep.equal
                 starttime: 10000
                 endtime: 20000
@@ -253,7 +253,7 @@ describe 'took', ->
             lines = ({name: 'OK', type: 'took', value: i, time: 15000, count: 1} for i in [0..64])
             lines.starttime = 10000
             lines.endtime = 20000
-            result = took lines
+            result = took.aggregate lines
             result.should.deep.equal
                 starttime: 10000
                 endtime: 20000
@@ -289,7 +289,7 @@ describe 'took', ->
             lines.starttime = 10000
             lines.endtime = 20000
             lines.log = true
-            result = took lines
+            result = took.aggregate lines
             result.should.deep.equal
                 starttime: 10000
                 endtime: 20000
@@ -340,7 +340,7 @@ describe 'took', ->
             lines.starttime = 10000
             lines.endtime = 20000
             lines.log = true
-            result = took lines
+            result = took.aggregate lines
             result.should.deep.equal
                 starttime: 10000
                 endtime: 20000

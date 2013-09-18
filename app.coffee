@@ -30,7 +30,7 @@ update = ->
     for key, lines of chunk when lines.length
         lines.starttime = chunk.starttime
         lines.endtime = chunk.endtime
-        aggregate = aggregators[lines[0].type] lines, key, buckets
+        aggregate = aggregators[lines[0].type].aggregate lines, key, buckets
         json = JSON.stringify aggregate
         fs.appendFile './data/' + key, '\x0F' + json + '\x0E', (err) ->
             if err then console.log key, err
