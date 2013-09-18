@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "pegjs": "0.7.0",
-    "chai": "1.7.2"
+    "chai": "1.7.2",
+    "express": "3.4.0"
   }
 }
