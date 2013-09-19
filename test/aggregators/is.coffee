@@ -29,7 +29,7 @@ describe 'is', ->
             result = aggregators.is.aggregate lines, 'is:OK', {}
             result.count.should.equal 5
 
-        it 'should give the correct total', ->
+        it 'should give the correct time', ->
             lines = [{name: 'OK', type: 'is', value: 10, time: 11000},
                      {name: 'OK', type: 'is', value: 30, time: 13000},
                      {name: 'OK', type: 'is', value: 50, time: 15000},
@@ -38,9 +38,20 @@ describe 'is', ->
             lines.starttime = 10000
             lines.endtime = 20000
             result = aggregators.is.aggregate lines, 'is:OK', {}
-            result.total.should.equal 410000
+            result.time.should.equal 9000
 
-        it 'should give the correct total when there are negative values', ->
+        it 'should give the correct mean', ->
+            lines = [{name: 'OK', type: 'is', value: 10, time: 11000},
+                     {name: 'OK', type: 'is', value: 30, time: 13000},
+                     {name: 'OK', type: 'is', value: 50, time: 15000},
+                     {name: 'OK', type: 'is', value: 70, time: 17000},
+                     {name: 'OK', type: 'is', value: 90, time: 19000}]
+            lines.starttime = 10000
+            lines.endtime = 20000
+            result = aggregators.is.aggregate lines, 'is:OK', {}
+            result.mean.should.equal 45.55555555555556
+
+        it 'should give the correct mean when there are negative values', ->
             lines = [{name: 'OK', type: 'is', value:  10, time: 11000},
                      {name: 'OK', type: 'is', value: -30, time: 13000},
                      {name: 'OK', type: 'is', value: -50, time: 15000},
@@ -49,9 +60,9 @@ describe 'is', ->
             lines.starttime = 10000
             lines.endtime = 20000
             result = aggregators.is.aggregate lines, 'is:OK', {}
-            result.total.should.equal 90000
+            result.mean.should.equal 10
 
-        it 'should give the correct total when there is a starting value', ->
+        it 'should give the correct time when there is a starting value', ->
             lines = [{name: 'OK', type: 'is', value: 10, time: 11000},
                      {name: 'OK', type: 'is', value: 30, time: 13000},
                      {name: 'OK', type: 'is', value: 50, time: 15000},
@@ -61,7 +72,19 @@ describe 'is', ->
             lines.endtime = 20000
             lines.startvalue = 80
             result = aggregators.is.aggregate lines, 'is:OK', {}
-            result.total.should.equal 490000
+            result.time.should.equal 10000
+
+        it 'should give the correct mean when there is a starting value', ->
+            lines = [{name: 'OK', type: 'is', value: 10, time: 11000},
+                     {name: 'OK', type: 'is', value: 30, time: 13000},
+                     {name: 'OK', type: 'is', value: 50, time: 15000},
+                     {name: 'OK', type: 'is', value: 70, time: 17000},
+                     {name: 'OK', type: 'is', value: 90, time: 19000}]
+            lines.starttime = 10000
+            lines.endtime = 20000
+            lines.startvalue = 80
+            result = aggregators.is.aggregate lines, 'is:OK', {}
+            result.mean.should.equal 49
 
         it 'should give the correct minimum value', ->
             lines = [{name: 'OK', type: 'is', value: 10, time: 11000},

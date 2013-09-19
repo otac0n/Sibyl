@@ -3,15 +3,20 @@ module.exports =
         lastindex = lines.length - 1
 
         total = 0
+        time = 0
         min = Math.min()
         max = Math.max()
         if lines.startvalue?
-            total = lines.startvalue * (lines[0].time - lines.starttime)
+            t = lines[0].time - lines.starttime
+            time += t
+            total = lines.startvalue * t
             min = lines.startvalue
             max = lines.startvalue
         for line, i in lines
             nexttime = if i is lastindex then lines.endtime else lines[i + 1].time
-            total += line.value * (nexttime - line.time)
+            t = (nexttime - line.time)
+            time += t
+            total += line.value * t
             min = Math.min line.value, min
             max = Math.max line.value, max
 
@@ -23,6 +28,7 @@ module.exports =
         firstvalue: if lines.startvalue? then lines.startvalue else lines[0].value
         lastvalue: lines[lastindex].value
         count: lines.length
-        total: total
         min: min
         max: max
+        mean: total / time
+        time: time
