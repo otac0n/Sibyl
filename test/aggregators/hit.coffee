@@ -63,3 +63,22 @@ describe 'hit', ->
             lines.endtime = 20000
             result = hit.aggregate lines
             result.count.should.equal 24.127
+
+    describe '#combine()', ->
+        it 'should give correct results when combining entire chunks', ->
+            chunks = [{starttime:10000,endtime:20000,count:2},
+                      {starttime:20000,endtime:30000,count:3}]
+            result = hit.combine chunks, 10000, 30000
+            result.should.deep.equal
+                starttime: 10000
+                endtime: 30000
+                count: 5
+
+        it 'should linearly interpolate when combining partial chunks', ->
+            chunks = [{starttime:10000,endtime:20000,count:2},
+                      {starttime:20000,endtime:30000,count:3}]
+            result = hit.combine chunks, 15000, 25000
+            result.should.deep.equal
+                starttime: 15000
+                endtime: 25000
+                count: 2.5
