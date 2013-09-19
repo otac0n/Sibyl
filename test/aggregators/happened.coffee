@@ -41,3 +41,16 @@ describe 'happened', ->
             lines.endtime = 20000
             result = happened.aggregate lines
             result.times.should.deep.equal []
+
+    describe '#combine()', ->
+        it 'should return all times in the given ranges', ->
+            chunks = [{starttime: 10000, endtime: 20000, times: [10100, 11400, 15400, 19000]},
+                      {starttime: 20000, endtime: 30000, times: [20200, 21000]}]
+            result = happened.combine chunks, 10000, 30000
+            result.times.should.deep.equal [10100, 11400, 15400, 19000, 20200, 21000]
+
+        it 'should not return times outside of the given range', ->
+            chunks = [{starttime: 10000, endtime: 20000, times: [10100, 11400, 15400, 19000]},
+                      {starttime: 20000, endtime: 30000, times: [20200, 21000]}]
+            result = happened.combine chunks, 18000, 21000
+            result.times.should.deep.equal [19000, 20200]
