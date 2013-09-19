@@ -51,3 +51,42 @@ module.exports =
         min: min
         max: max
         histogram: histogram
+    combine: (chunks, starttime, endtime) ->
+        filtered = (chunk for chunk in chunks when chunk.starttime < endtime and chunk.endtime > starttime)
+        if not filtered.length?
+            return starttime: starttime
+                   endtime: endtime
+                   count: 0
+                   histogram: makehistogram()
+
+        weight = (s, e) -> ((if e < endtime then e else endtime) - (if s > starttime then s else starttime)) / (e - s)
+
+        min = null
+        max = null
+        total = 0
+        count = 0
+        histogram = makehistogram Math.max (chunk.histogram.binsize for chunk in filtered)...
+        for chunk in filtered
+            if not min?
+                min = chunk.min
+                max = chunk.max
+            else
+                min = Math.min min, chunk.min
+                max = Math.max max, chunk.max
+
+            w = weight chunk.starttime, chunk.endtime
+            count += chunk.count * w
+            total += chunk.mean * chunk.count * w
+
+            for k, v of chunk.histogram when k not in ['binsize', 'length']
+                histogram = pushhistogram histogram, k, v * w
+
+        delete histogram.length
+
+        starttime: starttime
+        endtime: endtime
+        count: count
+        mean: total / count
+        min: min
+        max: max
+        histogram: histogram

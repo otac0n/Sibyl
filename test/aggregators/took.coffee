@@ -382,3 +382,40 @@ describe 'took', ->
                     '30': 100000
                     '31': 100000
                     binsize: 1
+
+    describe '#combine()', ->
+        it 'should give correct results when combining entire chunks', ->
+            chunks = [{starttime: 10000, endtime: 20000, count: 2, mean: 2, min: 1, max: 3, histogram: {'1': 1, '3': 1, binsize: 0.03125}},
+                      {starttime: 20000, endtime: 30000, count: 2, mean: 3, min: 2, max: 4, histogram: {'2': 1, '4': 1, binsize: 0.03125}}]
+            result = took.combine chunks, 10000, 30000
+            result.should.deep.equal
+                starttime: 10000
+                endtime: 30000
+                count: 4
+                mean: 2.5
+                min: 1
+                max: 4
+                histogram:
+                    '1': 1
+                    '2': 1
+                    '3': 1
+                    '4': 1
+                    binsize: 0.03125
+
+        it 'should linearly interpolate when combining partial chunks', ->
+            chunks = [{starttime: 10000, endtime: 20000, count: 2, mean: 2, min: 1, max: 3, histogram: {'1': 1, '3': 1, binsize: 0.03125}},
+                      {starttime: 20000, endtime: 30000, count: 2, mean: 3, min: 2, max: 4, histogram: {'2': 1, '4': 1, binsize: 0.03125}}]
+            result = took.combine chunks, 15000, 25000
+            result.should.deep.equal
+                starttime: 15000
+                endtime: 25000
+                count: 2
+                mean: 2.5
+                min: 1
+                max: 4
+                histogram:
+                    '1': 0.5
+                    '2': 0.5
+                    '3': 0.5
+                    '4': 0.5
+                    binsize: 0.03125
