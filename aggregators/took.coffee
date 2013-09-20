@@ -53,11 +53,13 @@ module.exports =
         histogram: histogram
     combine: (chunks, starttime, endtime) ->
         filtered = (chunk for chunk in chunks when chunk.starttime < endtime and chunk.endtime > starttime)
-        if not filtered.length?
-            return starttime: starttime
-                   endtime: endtime
-                   count: 0
-                   histogram: makehistogram()
+        if filtered.length == 0
+            ret =
+                starttime: starttime
+                endtime: endtime
+                count: 0
+                histogram: makehistogram()
+            return ret
 
         weight = (s, e) -> ((if e < endtime then e else endtime) - (if s > starttime then s else starttime)) / (e - s)
 
