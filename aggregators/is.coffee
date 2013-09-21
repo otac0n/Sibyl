@@ -32,3 +32,45 @@ module.exports =
         max: max
         mean: total / time
         time: time
+    combine: (chunks, starttime, endtime) ->
+        filtered = (chunk for chunk in chunks when chunk.starttime < endtime and chunk.endtime > starttime)
+        filtered.sort (a, b) -> a.starttime - b.starttime
+
+        weight = (s, e) -> ((if e < endtime then e else endtime) - (if s > starttime then s else starttime)) / (e - s)
+
+        firsttime = null
+        firstvalue = null
+        lastvalue = null
+        count = 0
+        min = null
+        max = null
+        total = 0
+        time = 0
+        for chunk in filtered
+            if not firsttime?
+                firsttime = Math.max chunk.firsttime, starttime
+                if chunk.firsttime >= starttime
+                    firstvalue = chunk.firstvalue
+                min = chunk.min
+                max = chunk.max
+            else
+                min = Math.min min, chunk.min
+                max = Math.max max, chunk.max
+
+            if chunk.endtime >= endtime
+                lastvalue = chunk.lastvalue
+            w = weight chunk.starttime, chunk.endtime
+            count += chunk.count * w
+            time += chunk.time * w
+            total += chunk.mean * chunk.time * w
+
+        starttime: starttime
+        endtime: endtime
+        firsttime: firsttime
+        firstvalue: firstvalue
+        lastvalue: lastvalue
+        count: count
+        min: min
+        max: max
+        mean: total / time
+        time: time

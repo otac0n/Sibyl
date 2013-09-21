@@ -218,3 +218,65 @@ describe 'is', ->
             buckets = {}
             result = aggregators.is.aggregate lines, 'is:OK', buckets
             buckets['is:OK'].startvalue.should.equal 90
+
+    describe '#combine()', ->
+        it 'should linearly interpolate when combining partial chunks', ->
+            chunks = [{starttime: 100, endtime: 200, firsttime: 100, firstvalue: 10, lastvalue: 10, count: 1, min: 10, max: 10, mean: 10, time: 100}]
+            result = aggregators.is.combine chunks, 0, 150
+            result.should.deep.equal
+                starttime: 0
+                endtime: 150
+                firsttime: 100
+                firstvalue: 10
+                lastvalue: 10
+                count: 0.5
+                min: 10
+                max: 10
+                mean: 10
+                time: 50
+
+        it 'should maintain the first value when combining partial chunks', ->
+            chunks = [{starttime: 100, endtime: 200, firsttime: 100, firstvalue: 10, lastvalue: 10, count: 1, min: 10, max: 10, mean: 10, time: 100}]
+            result = aggregators.is.combine chunks, 125, 175
+            result.should.deep.equal
+                starttime: 125
+                endtime: 175
+                firsttime: 125
+                firstvalue: null
+                lastvalue: 10
+                count: 0.5
+                min: 10
+                max: 10
+                mean: 10
+                time: 50
+
+        it 'should maintain the fidelity when combining a single chunk', ->
+            chunks = [{starttime: 100, endtime: 200, firsttime: 100, firstvalue: 10, lastvalue: 10, count: 1, min: 10, max: 10, mean: 10, time: 100}]
+            result = aggregators.is.combine chunks, 100, 200
+            result.should.deep.equal
+                starttime: 100
+                endtime: 200
+                firsttime: 100
+                firstvalue: 10
+                lastvalue: 10
+                count: 1
+                min: 10
+                max: 10
+                mean: 10
+                time: 100
+
+        it 'should take the mean of the chunks, but not the empty times', ->
+            chunks = [{starttime: 100, endtime: 200, firsttime: 100, firstvalue: 10, lastvalue: 10, count: 1, min: 10, max: 10, mean: 10, time: 100}
+                      {starttime: 200, endtime: 400, firsttime: 100, firstvalue: 5,  lastvalue: 5,  count: 2, min: 5,  max: 5,  mean: 5,  time: 200}]
+            result = aggregators.is.combine chunks, 0, 500
+            result.should.deep.equal
+                starttime: 0
+                endtime: 500
+                firsttime: 100
+                firstvalue: 10
+                lastvalue: null
+                count: 3
+                min: 5
+                max: 10
+                mean: 6.666666666666667
+                time: 300
