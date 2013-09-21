@@ -1,0 +1,35 @@
+<%
+    var binsize = data.histogram.binsize
+    delete data.histogram.binsize
+
+    var width = options.width
+    var height = options.height
+
+    var minbin = 0
+    var maxbin = 0
+    var maxvalue = 0
+    for (bin in data.histogram) {
+        minbin = Math.min(minbin, +bin)
+        maxbin = Math.max(maxbin, +bin + binsize)
+        maxvalue = Math.max(maxvalue, data.histogram[bin])
+    }
+
+    function mapX(x) { return x * width / (maxbin - minbin); }
+    function mapY(y) { return height - y * height / maxvalue; }
+    function rect(x1, y1, x2, y2) {
+        x1 = mapX(x1);
+        x2 = mapX(x2);
+        y1 = mapY(y1);
+        y2 = mapY(y2);
+        %><rect x="<%= Math.min(x1, x2) %>" y="<%= Math.min(y1, y2) %>" width="<%= Math.abs(x2 - x1) %>" height="<%= Math.abs(y2 - y1) %>" style="fill: black; stroke: black;" /><%
+    }
+-%>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="<%= width %>" height="<%= height %>"><%
+    for (bin in data.histogram)
+    {
+        bin = +bin;
+        var value = data.histogram[bin];
+
+        rect(bin, 0, bin + binsize, value);
+    }
+%></svg>
