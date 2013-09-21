@@ -18,6 +18,15 @@ graph = (req, res) ->
     options =
         width: 600
         height: 400
+        palette: [
+            '#e69f00'
+            '#56b4e9'
+            '#2b9f78'
+            '#f0e442'
+            '#0072b2'
+            '#d55e00'
+            '#cc79a7'
+        ]
 
     dateParse = (now, s) ->
         match = datePattern.exec s
