@@ -92,3 +92,31 @@ module.exports =
         min: min
         max: max
         histogram: histogram
+    addPercentiles: (chunk, percentiles) ->
+        values = []
+        current = 0
+
+        total = 0
+        total += v for k, v of chunk.histogram when k not in ['binsize']
+        accum = 0
+        lastpercentile = 0
+        sortedbins = (+k for k of chunk.histogram when k not in ['binsize'])
+        sortedbins.sort (a, b) -> a - b
+        for bin in sortedbins
+            accum += chunk.histogram[bin]
+            percentile = accum / total
+            binmin = Math.max chunk.min, bin
+            binmax = Math.min chunk.max, bin + chunk.histogram.binsize
+
+            while current < percentiles.length && percentiles[current] <= percentile
+                if percentile - lastpercentile == 0
+                    values.push binmin
+                else
+                    values.push binmin + (percentiles[current] - lastpercentile) * (binmax - binmin) / (percentile - lastpercentile)
+                current += 1
+
+            lastpercentile = percentile
+
+        chunk.percentiles = {}
+        for i in [0...percentiles.length]
+            chunk.percentiles[percentiles[i]] = values[i]

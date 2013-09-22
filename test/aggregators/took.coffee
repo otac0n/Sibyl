@@ -419,3 +419,49 @@ describe 'took', ->
                     '3': 0.5
                     '4': 0.5
                     binsize: 0.03125
+
+    describe '#addpercentiles()', ->
+        it 'should never return a value less than the min', ->
+            chunk =
+                starttime: 0
+                endtime: 100
+                min: 1
+                max: 1.8
+                histogram:
+                    '0': 2
+                    binsize: 2
+            took.addPercentiles chunk, [0, 0.01]
+            chunk.percentiles.should.deep.equal
+                '0': 1
+                '0.01': 1.008
+
+        it 'should never return a value greater than the max', ->
+            chunk =
+                starttime: 0
+                endtime: 100
+                min: 1
+                max: 1.8
+                histogram:
+                    '0': 2
+                    binsize: 2
+            took.addPercentiles chunk, [0.99, 1]
+            chunk.percentiles.should.deep.equal
+                '0.99': 1.792
+                '1': 1.8
+
+        it 'should linearly interpolate within a range when the actual value is ambiguous', ->
+            chunk =
+                starttime: 0
+                endtime: 100
+                min: 0
+                max: 2.9
+                histogram:
+                    '0': 2
+                    '1': 1
+                    '2': 2
+                    binsize: 1
+            took.addPercentiles chunk, [0.4, 0.5, 0.6]
+            chunk.percentiles.should.deep.equal
+                '0.4': 1
+                '0.5': 1.5
+                '0.6': 2
