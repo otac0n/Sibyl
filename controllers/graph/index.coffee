@@ -1,6 +1,5 @@
 lib = require '../../lib'
 metricPattern = /^([-_A-Za-z0-9.]+)\/(is|took|hit|happened)$/
-datePattern = /^([-+]?\d+)(second|minute|hour|day|month|year)s?$/
 
 graph = (req, res) ->
     match = metricPattern.exec req.query.metric
@@ -24,28 +23,12 @@ graph = (req, res) ->
         ]
         percentiles: [0.01, 0.1, 0.5, 0.9, 0.99]
 
-    dateParse = (now, s) ->
-        match = datePattern.exec s
-        if not match?
-            # try to parse as a literal date
-            return null
-        date = new Date(now)
-        diff = +match[1]
-        switch match[2]
-            when 'second' then date.setSeconds date.getSeconds() + diff
-            when 'minute' then date.setMinutes date.getMinutes() + diff
-            when 'hour' then date.setHours date.getHours() + diff
-            when 'day' then date.setDate date.getDate() + diff
-            when 'month' then date.setMonth date.getMonth() + diff
-            when 'year' then date.setYear date.getYear() + diff
-        return date
-
     now = new Date()
     startdate = req.query.start || "-1day"
     enddate = req.query.end || "0day"
 
-    starttime = (dateParse now, startdate).getTime()
-    endtime = (dateParse now, enddate).getTime()
+    starttime = (lib.dateParse now, startdate).getTime()
+    endtime = (lib.dateParse now, enddate).getTime()
 
     lib.serializer.read "#{type}-#{name}", starttime, endtime, (err, chunks) ->
         if err then throw err
