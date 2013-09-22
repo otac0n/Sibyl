@@ -61,7 +61,7 @@ graph = (req, res) ->
             chunks.push JSON.parse m[1]
 
         result = aggregators[type].combine chunks, starttime, endtime
-        aggregators[type].addpercentiles result, options.percentiles
+        aggregators[type].addPercentiles result, options.percentiles
 
         res.setHeader 'Content-Type', 'image/svg+xml'
         res.render 'graph/views/histogram', { data: result, options: options }
