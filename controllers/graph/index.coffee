@@ -1,4 +1,4 @@
-fs = require 'fs'
+lib = require '../../lib'
 aggregators =
     is: require '../../aggregators/is'
     took: require '../../aggregators/took'
@@ -52,13 +52,8 @@ graph = (req, res) ->
     starttime = (dateParse now, startdate).getTime()
     endtime = (dateParse now, enddate).getTime()
 
-    fs.readFile "./data/#{type}-#{name}", { encoding: 'UTF8'}, (err, data) ->
+    lib.serializer.read "#{type}-#{name}", starttime, endtime, (err, chunks) ->
         if err then throw err
-
-        chunks = []
-        chunkPattern = /\x0F([^\x0F\x0E]+)\x0E/g
-        while (m = chunkPattern.exec data) != null
-            chunks.push JSON.parse m[1]
 
         result = aggregators[type].combine chunks, starttime, endtime
         aggregators[type].addPercentiles result, options.percentiles

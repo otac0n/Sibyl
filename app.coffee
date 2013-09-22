@@ -1,6 +1,7 @@
 dgram = require 'dgram'
 fs = require 'fs'
 PEG = require 'pegjs'
+lib = require './lib'
 aggregators =
     is: require './aggregators/is'
     took: require './aggregators/took'
@@ -31,8 +32,7 @@ update = ->
         lines.starttime = chunk.starttime
         lines.endtime = chunk.endtime
         aggregate = aggregators[lines[0].type].aggregate lines, key, buckets
-        json = JSON.stringify aggregate
-        fs.appendFile './data/' + key, '\x0F' + json + '\x0E', (err) ->
+        lib.serializer.append key, aggregate, (err) ->
             if err then console.log key, err
 
 setInterval update, 10000
