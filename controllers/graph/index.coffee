@@ -27,6 +27,7 @@ graph = (req, res) ->
             '#d55e00'
             '#cc79a7'
         ]
+        percentiles: [0.01, 0.1, 0.5, 0.9, 0.99]
 
     dateParse = (now, s) ->
         match = datePattern.exec s
@@ -60,6 +61,7 @@ graph = (req, res) ->
             chunks.push JSON.parse m[1]
 
         result = aggregators[type].combine chunks, starttime, endtime
+        aggregators[type].addpercentiles result, options.percentiles
 
         res.setHeader 'Content-Type', 'image/svg+xml'
         res.render 'graph/views/histogram', { data: result, options: options }

@@ -24,6 +24,9 @@
         y2 = mapY(y2);
         %><rect x="<%= Math.min(x1, x2) %>" y="<%= Math.min(y1, y2) %>" width="<%= Math.abs(x2 - x1) %>" height="<%= Math.abs(y2 - y1) %>" class="<%= cssClass %>" /><%
     }
+    function line(x1, y1, x2, y2, cssClass) {
+        %><line x1="<%= mapX(x1) %>" y1="<%= mapY(y1) %>" x2="<%= mapX(x2) %>" y2="<%= mapY(y2) %>" class="<%= cssClass %>" /><%
+    }
 -%>
 <svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="<%= width %>" height="<%= height %>"><%
     for (var bin in data.histogram)
@@ -33,7 +36,14 @@
 
         rect(bin, 0, bin + binsize, value, "histogram-bar color1");
     }
+
+    for (var percentile in data.percentiles) {
+        var value = data.percentiles[percentile];
+
+        line(value, 0, value, maxvalue, "percentile-line");
+    }
 %><style>
+.percentile-line { stroke: black; stroke-dasharray: 5 5; }
 <%
     for (var i = 0; i < palette.length; i++) {
         %>.color<%= i + 1 %> { fill: <%= palette[i] %>; stroke: <%= palette[i] %>; }
