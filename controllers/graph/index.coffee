@@ -1,9 +1,4 @@
 lib = require '../../lib'
-aggregators =
-    is: require '../../aggregators/is'
-    took: require '../../aggregators/took'
-    hit: require '../../aggregators/hit'
-    happened: require '../../aggregators/happened'
 metricPattern = /^([-_A-Za-z0-9.]+)\/(is|took|hit|happened)$/
 datePattern = /^([-+]?\d+)(second|minute|hour|day|month|year)s?$/
 
@@ -55,8 +50,8 @@ graph = (req, res) ->
     lib.serializer.read "#{type}-#{name}", starttime, endtime, (err, chunks) ->
         if err then throw err
 
-        result = aggregators[type].combine chunks, starttime, endtime
-        aggregators[type].addPercentiles result, options.percentiles
+        result = lib.aggregators[type].combine chunks, starttime, endtime
+        lib.aggregators[type].addPercentiles result, options.percentiles
 
         res.setHeader 'Content-Type', 'image/svg+xml'
         res.render 'graph/views/histogram', { data: result, options: options }

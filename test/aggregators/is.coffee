@@ -1,6 +1,5 @@
 should = (require 'chai').should()
-aggregators =
-    is: require '../../aggregators/is'
+aggregators = (require '../../lib').aggregators
 
 describe 'is', ->
     describe '#aggregate()', ->

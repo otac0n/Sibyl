@@ -1,5 +1,5 @@
 should = (require 'chai').should()
-happened = require '../../aggregators/happened'
+happened = (require '../../lib').aggregators.happened
 
 describe 'happened', ->
     describe '#aggregate()', ->

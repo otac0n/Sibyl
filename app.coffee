@@ -2,11 +2,6 @@ dgram = require 'dgram'
 fs = require 'fs'
 PEG = require 'pegjs'
 lib = require './lib'
-aggregators =
-    is: require './aggregators/is'
-    took: require './aggregators/took'
-    hit: require './aggregators/hit'
-    happened: require './aggregators/happened'
 
 parser = PEG.buildParser fs.readFileSync('protocol.pegjs', 'utf8')
 server = dgram.createSocket 'udp4'
@@ -31,7 +26,7 @@ update = ->
     for key, lines of chunk when lines.length
         lines.starttime = chunk.starttime
         lines.endtime = chunk.endtime
-        aggregate = aggregators[lines[0].type].aggregate lines, key, buckets
+        aggregate = lib.aggregators[lines[0].type].aggregate lines, key, buckets
         lib.serializer.append key, aggregate, (err) ->
             if err then console.log key, err
 
