@@ -22,6 +22,7 @@ graph = (req, res) ->
             '#cc79a7'
         ]
         percentiles: [0.01, 0.1, 0.5, 0.9, 0.99]
+        includeZero: false
 
     now = new Date()
     startdate = req.query.start || "-1day"

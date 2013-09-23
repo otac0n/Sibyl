@@ -6,8 +6,8 @@
     var height = options.height
     var palette = options.palette
 
-    var minbin = 0
-    var maxbin = 0
+    var minbin = options.includeZero ? 0 : Math.min()
+    var maxbin = options.includeZero ? 0 : Math.max()
     var maxvalue = 0
     for (bin in data.histogram) {
         minbin = Math.min(minbin, +bin)
@@ -15,7 +15,7 @@
         maxvalue = Math.max(maxvalue, data.histogram[bin])
     }
 
-    function mapX(x) { return x * width / (maxbin - minbin); }
+    function mapX(x) { return (x - minbin) * width / (maxbin - minbin); }
     function mapY(y) { return height - y * height / maxvalue; }
     function rect(x1, y1, x2, y2, cssClass) {
         x1 = mapX(x1);
