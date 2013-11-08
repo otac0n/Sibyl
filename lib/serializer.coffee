@@ -2,7 +2,7 @@ fs = require 'fs'
 
 module.exports =
     append: (key, chunk, callback) ->
-        json = JSON.stringify aggregate
+        json = JSON.stringify chunk
         data = '\x0F' + json + '\x0E'
         fs.appendFile './data/' + key, data, callback
     read: (key, starttime, endtime, callback) ->
