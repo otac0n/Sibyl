@@ -34,11 +34,25 @@ graph = (req, res) ->
     lib.serializer.read "#{type}-#{name}", starttime, endtime, (err, chunks) ->
         if err then throw err
 
-        result = lib.aggregators[type].combine chunks, starttime, endtime
-        lib.aggregators[type].addPercentiles result, options.percentiles
+        if req.query.type == 'timeseries'
+            boundaries = []
+            time = (endtime - starttime) / 100
+            for i in [0..100]
+                boundaries.push starttime + time * i
+            boundaries.push endtime
+            result =
+                starttime: starttime
+                endtime: endtime
+                chunks: (lib.aggregators[type].combine chunks, boundaries[i], boundaries[i + 1] for i in [0..100])
 
-        res.setHeader 'Content-Type', 'image/svg+xml'
-        res.render 'graph/views/histogram', { data: result, options: options }
+            res.setHeader 'Content-Type', 'image/svg+xml'
+            res.render 'graph/views/timeseries', { data: result, options: options }
+        else
+            result = lib.aggregators[type].combine chunks, starttime, endtime
+            lib.aggregators[type].addPercentiles result, options.percentiles
+
+            res.setHeader 'Content-Type', 'image/svg+xml'
+            res.render 'graph/views/histogram', { data: result, options: options }
 
 exports.init = (app) ->
     app.get('/graph', graph)

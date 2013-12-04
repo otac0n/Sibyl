@@ -1,0 +1,30 @@
+<%
+    var width = options.width
+    var height = options.height
+
+    var minvalue = options.includeZero ? 0 : Math.min()
+    var maxvalue = options.includeZero ? 0 : Math.max()
+    for (var i = 0; i < data.chunks.length; i++) {
+        chunk = data.chunks[i]
+        if (chunk.count != 0) {
+            minvalue = Math.min(minvalue, +chunk.mean)
+            maxvalue = Math.max(maxvalue, +chunk.mean)
+        }
+    }
+
+    function mapX(x) { return width - (x - data.starttime) * width / (data.endtime - data.starttime); }
+    function mapY(y) { return (y - minvalue) * height / (maxvalue - minvalue); }
+    function line(x1, y1, x2, y2, cssClass) {
+        %><%= JSON.stringify({min: data.endtime - data.starttime}) %><line x1="<%= mapX(x1) %>" y1="<%= mapY(y1) %>" x2="<%= mapX(x2) %>" y2="<%= mapY(y2) %>" class="<%= cssClass %>" /><%
+    }
+-%>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="<%= width %>" height="<%= height %>"><%
+    for (var i = 0; i < data.chunks.length - 1; i++) {
+        chunk = data.chunks[i]
+        if (chunk.count != 0) {
+            line(chunk.starttime, chunk.mean, chunk.endtime, chunk.mean, "line")
+        }
+    }
+%><style>
+.line { stroke: black; stroke-dasharray: 5 5; }
+</style></svg>
